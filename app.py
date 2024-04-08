@@ -4,6 +4,10 @@ from datetime import datetime,timedelta
 from oauth2client.service_account import ServiceAccountCredentials
 from collections import defaultdict
 import pandas as pd
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def parsing():
@@ -14,16 +18,14 @@ def parsing():
     # url на получение статистики
     url_2 = 'https://advert-api.wb.ru/adv/v2/fullstats'
 
+    API_KEY = os.getenv("API_KEY")
+
 
     HeaderApiKey1 = {
-        'Authorization': 'eyJhbGciOiJFUzI1NiIsImtpZCI6IjIwMjMxMjI1djEiLCJ0eXAiOiJKV1QifQ'
-                         '.eyJlbnQiOjEsImV4cCI6MTcyNDM3NTc3MCwiaWQiOiJhYWY2Mjg2Ny00Zjc1LT'
-                         'RiNTMtODljNS05MTExZTlhYjYyZGQiLCJpaWQiOjE0Njk0MTQzLCJvaWQiOjgxMjg'
-                         '3MCwicyI6NjgsInNpZCI6IjBjNDdiMGMwLWY3MmMtNDYwNi04MjYxLTFhMmNiYjZkND'
-                         'AzNyIsInQiOmZhbHNlLCJ1aWQiOjE0Njk0MTQzfQ.bWwOn5JQrNCte8o6KMpr38o5Uh5k-'
-                         '-0JdlZFnImwNvJfoj0-nZDbxcn7NJKg07Vn8NIi9irS9-6T0KJFPlgfMg',
+        'Authorization': f'{API_KEY}',
         'Content-Type': 'application/json'
     }
+    print(HeaderApiKey1)
 
 
     scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
