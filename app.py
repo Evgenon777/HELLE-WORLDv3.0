@@ -19,6 +19,7 @@ def parsing():
     url_2 = 'https://advert-api.wb.ru/adv/v2/fullstats'
 
     API_KEY = os.getenv("API_KEY")
+    nutragenanalyticseae0615deabf = os.getenv("API_KEY")
 
 
     HeaderApiKey1 = {
