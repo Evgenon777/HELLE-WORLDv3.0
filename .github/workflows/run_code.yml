@@ -6,6 +6,7 @@ on:
 
 env:
     API_KEY: ${{ secrets.API_KEY }}
+    NUTRA: ${{ secrets.NUTRA }}
     
 
 jobs:
