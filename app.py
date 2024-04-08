@@ -19,18 +19,17 @@ def parsing():
     url_2 = 'https://advert-api.wb.ru/adv/v2/fullstats'
 
     API_KEY = os.getenv("API_KEY")
-    nutragenanalyticseae0615deabf = os.getenv("API_KEY")
+    nutra = os.getenv("nutra")
 
 
     HeaderApiKey1 = {
         'Authorization': f'{API_KEY}',
         'Content-Type': 'application/json'
     }
-    print(HeaderApiKey1)
 
 
     scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-    credentials = ServiceAccountCredentials.from_json_keyfile_name("nutragenanalytics-eae0615deabf.json", scope)
+    credentials = ServiceAccountCredentials.from_json_keyfile_name(f"{nutra}", scope)
     columnStat = 3
 
     now = datetime.now()
