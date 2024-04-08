@@ -1,12 +1,13 @@
 name: WB GOOD EVERY DAY
 
 on: 
-  schedule:
-    - cron: '* * * * *'
+  push:
+  
 
 
 env:
     API_KEY: ${{ secrets.API_KEY }}
+    KEY_TABLE: ${{ secrets.KEY_TABLE }}
     
 
 jobs:
