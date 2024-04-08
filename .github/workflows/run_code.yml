@@ -3,7 +3,7 @@ name: Daily Super-Duper Bot
 on: 
   push:
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '* * * * *'
 
 
 env:
