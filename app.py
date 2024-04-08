@@ -323,7 +323,7 @@ def parsing():
             def CopyFromExcInGsh(): 
                 client = gspread.authorize(credentials)
 
-                spreadsheet = client.open(f'{KEY_TABLE}')
+                spreadsheet = client.open('{KEY_TABLE}')
                 worksheet = spreadsheet.worksheet('Аналитика и статистика')
 
                 df = pd.read_excel("analyticWB.xlsx")
