@@ -22,8 +22,8 @@ def parsing():
     url_2 = 'https://advert-api.wb.ru/adv/v2/fullstats'
 
     API_KEY = os.getenv("API_KEY")
-    #nutragenanalyticseae0615deabf = os.getenv("API_KEY")
     NUTRA = os.getenv('SECRET_JSON')
+    KEY_TABLE = os.getenv('KEY_TABLE')
 
 
     HeaderApiKey1 = {
@@ -147,14 +147,14 @@ def parsing():
                         for nm in a['nm']:
                             nm['appType'] = a['appType']
                             nm['date'] = d['date']
-                            nm['advertId'] = c['advertId'] #Обработка данных из словаря
+                            nm['advertId'] = c['advertId'] 
                             camp_data.append(nm)
             camp_df = pd.DataFrame(camp_data)
             df_filtered = camp_df[["nmId", 'views', "clicks", "advertId"]]
             df_filtered = camp_df.groupby('advertId').agg(
                 {'nmId': 'first', 'views': 'sum', 'clicks': 'sum'}).reset_index()
             df_filtered = df_filtered.groupby('nmId').agg(
-                lambda x: x.sum() if x.name != 'advertId' else x.iloc[0]).reset_index() #складывание данных с рахныъ устройств
+                lambda x: x.sum() if x.name != 'advertId' else x.iloc[0]).reset_index() 
             df_filtered.drop(columns=['advertId'], inplace=True)
             df_filtered['CTR'] = (round(df_filtered['clicks'] / df_filtered['views'] * 100, 2))
             camp_data1 = df_filtered.set_index('nmId').to_dict(orient="index")
@@ -322,8 +322,8 @@ def parsing():
             def CopyFromExcInGsh():
                 client = gspread.authorize(credentials)
 
-                spreadsheet = client.open('analyticWB')
-                worksheet = spreadsheet.worksheet('line')
+                spreadsheet = client.open(f'{KEY_TABLE}')
+                worksheet = spreadsheet.worksheet('Аналитика и статистика')
 
                 df = pd.read_excel("analyticWB.xlsx")
                 data_list = df.values.tolist()
