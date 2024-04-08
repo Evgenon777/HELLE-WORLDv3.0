@@ -2,10 +2,13 @@ import openpyxl,requests,schedule,gspread,re,time
 from openpyxl.utils import get_column_letter
 from datetime import datetime,timedelta
 from oauth2client.service_account import ServiceAccountCredentials
+from google.oauth2 import service_account
 from collections import defaultdict
 import pandas as pd
 import os
 from dotenv import load_dotenv
+import json
+import io
 
 load_dotenv()
 
@@ -19,18 +22,19 @@ def parsing():
     url_2 = 'https://advert-api.wb.ru/adv/v2/fullstats'
 
     API_KEY = os.getenv("API_KEY")
-    NUTRA = os.getenv("nutra")
-    print()
+    #nutragenanalyticseae0615deabf = os.getenv("API_KEY")
+    NUTRA = os.getenv('SECRET_JSON')
 
 
     HeaderApiKey1 = {
         'Authorization': f'{API_KEY}',
         'Content-Type': 'application/json'
     }
-
+    print(HeaderApiKey1)
 
     scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-    credentials = ServiceAccountCredentials.from_json_keyfile_name(f"{NUTRA}", scope)
+    credentials = ServiceAccountCredentials.from_json_keyfile_name("secret.json", scope)
+
     columnStat = 3
 
     now = datetime.now()
