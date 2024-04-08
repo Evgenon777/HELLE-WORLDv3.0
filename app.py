@@ -24,6 +24,7 @@ def parsing():
     API_KEY = os.getenv("API_KEY")
     NUTRA = os.getenv('SECRET_JSON')
     KEY_TABLE = os.getenv('KEY_TABLE')
+    #print(KEY_TABLE)
 
 
     HeaderApiKey1 = {
@@ -319,7 +320,7 @@ def parsing():
             wb.save("analyticWB.xlsx")
 
 
-            def CopyFromExcInGsh():
+            def CopyFromExcInGsh(): 
                 client = gspread.authorize(credentials)
 
                 spreadsheet = client.open(f'{KEY_TABLE}')
