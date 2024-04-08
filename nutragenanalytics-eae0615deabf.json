@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "nutragenanalytics",
+  "private_key_id": "eae0615deabf1daeeb2fac2720f0a05ad526d4d6",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDROprTVfZdSXI/\nEDfb45j/giZhGHnG3bcy/4ahN9O9gXKkZ1vXbx65Aw0StX0TzL1tVxuJi+R8YawH\nlTkrwU+TmaklkVHhcrl/8Ke7JGEOqc4fO3oo6SqulaPvU/FvroI7jOZHoKhzP59M\nXC2qgMW8nthwtPkO8ytpyGz5J60ZiHHwu0e+l1ZqjOAJFmv8TBFHbu3gZlEW7d5K\nDZEM6qUuQUjbBeTHgT6u07X5qpYLvRe2+EVQKhtRE4M+ICEmH7HBPMNUO8RJMqTL\nnJBK8b2Q9zed3cvCtcEwfVJ/FkXDkj8Mt5JeSZCxfuElImgPuKAdpFs8N/XfVsF8\nLaMM5SwzAgMBAAECggEAA51OZmnnlyX5K3NlcPmGFPKTz31DlqFm6aJ2Ghvjnwmj\nnYkhkjUGZAN++tHtfBA/PNUn5yDmYhWyifD/K1fWvuyFJQkqenQSa047f4/500Mw\ntI5rplWc2fuWI5Yg0iFCzlzj74csJyLevCF4Mn1bV85WBosXJbXNYVxH3FKzUAET\nlCxRqJqP6Pf+k/hP45+pSkihZJ9kMl8KY7mKhXiGfJ9yJs2ctkHD3+K+KvtYEkzi\nSHZzLQdFG1a+jMA0ZOB4gy8MTiHu0tKT8upZ83SrUcmaqCWnbYmQ9lmtAXwoWwXw\nd+RORR9pmznJeOZNaCTIldBzE00UTAIvLvxT5MCRtQKBgQD4DlnOSCqucCYINVRg\nY/RVaJSQr/Qp+rt7IfQGd3/v44YYQ4A3FfTuId93mSoM71hOT8AoUpbsvHVXmyeb\nO9LI+e/hqoz10lFsq6GB/C9Ix/weKXYBlDWX7pqOyjMmCtf3JOwaZr0mlk98Gh9X\n/097JORoKxpg6J7ZF6j473XG1QKBgQDX7e+M7QwaFXtVZ4yQMD4zzKGIDmOSTgBl\nBMQgkhcEeV0jpaHm2ttjNWvFZGsxfxC6egJq0RSG5D55O53HzzJ6lnvD40nRfzFk\nGxbJAmGA7gFxeEElEwdqb2ELbJGbl39XlVBZm73+tTs4kbbn3ZEwvsf2vbgvTh26\nrdCNroi65wKBgQC8VEDwsa/eAn2Ni9fE2v6dfaoV89D/skJ3KP8Zjc7PdcHQWCdX\nK09rIMKGDf50FZ/IzRnKQ3IcyLSaT80ROak+Nyxd+9vLouN5CxGzG6FWs6cBy16x\nsjHCaUBlGrUcs+zl0d2D6e7ABizQvxB/AfL5Prg/MkJzwwkfL6x1W3DjBQKBgDGb\nJ/1oN++GH99u+ovliWS9Dh8DrzxdTxnmDmitJzyP5SXbV2aBwQT5sNiYSUgFuQIe\nJZAEmIKkzPVtDMJqh15CVAycmsjWP7KPxpxHP78u7oXy6oRp6ro4/EJznr/v/gFQ\n/DSZ4vwxBnnof+ykqkZYjffRfg7gE1RfuhnSjvbhAoGBALm9hssSfV6UVXqAOpYU\nSYUhnvZy4shehFAuzxB7A3hz3wPHVcGbMVn38xHxBNkJsDNo8DO6re3x4pssW/mg\nF5Jkb8ZVVlFjDVHD1FO4YoMUBSeYOtfSk58GL4LYPcq1G1pxqLBn2jcfuy9nT28o\nq3ujMoYgGBov4PZpurZYgv3O\n-----END PRIVATE KEY-----\n",
+  "client_email": "analyticswb@nutragenanalytics.iam.gserviceaccount.com",
+  "client_id": "111999772940431444219",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/analyticswb%40nutragenanalytics.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
