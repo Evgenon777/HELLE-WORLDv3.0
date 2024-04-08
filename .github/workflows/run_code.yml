@@ -8,15 +8,19 @@ on:
 
 env:
     API_KEY: ${{ secrets.API_KEY }}
-    NUTRA: ${{ secrets.NUTRA }}
     
 
 jobs:
     Daily-Run:
         runs-on: ubuntu-latest
         steps:
+
             - name: Checkout Code
               uses: actions/checkout@v4
+            - name: Use secret JSON
+              env:
+                SECRET_JSON: ${{ secrets.NUTRA }}
+              run: echo "$SECRET_JSON" > secret.json
             - name: Install Dependencies
               run: pip install -r requirements.txt 
             - name: Run App
