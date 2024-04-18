@@ -364,8 +364,8 @@ def parsing():
             def CopyFromExcInGsh(): 
                 client = gspread.authorize(credentials)
 
-                spreadsheet = client.open("analyticWB")
-                worksheet = spreadsheet.worksheet('Лист2')
+                spreadsheet = client.open(KEY_TABLE)
+                worksheet = spreadsheet.worksheet('Аналитика и статистика нутраген ')
 
                 df = pd.read_excel("analyticWB.xlsx")
                 data_list = df.values.tolist()
