@@ -1,6 +1,7 @@
 name: WB GOOD EVERY DAY
 
 on: 
+  push:
   schedule:
     - cron: '0 */3 * * *'
 

@@ -188,6 +188,11 @@ def parsing():
                 brand_name = brand_name.replace("brandName", "")
                 brands.append(brand_name)
 
+            indices_name = [i for i, x in enumerate(words) if x == "name"]
+            name = [words[i + 1] if i + 1 < len(words) else None for i in indices_name]
+
+
+
             indices_nmID = [i for i, x in enumerate(words) if x == "nmID"]
             nmID = [words[i + 1] if i + 1 < len(words) else None for i in indices_nmID]
             indices_ost = [i for i, x in enumerate(words) if x == "stocksWb"]
@@ -201,10 +206,24 @@ def parsing():
             indices_aa = [i for i, x in enumerate(words) if x == "addToCartCount"]
             addToCartCount = [words[i + 1] if i + 1 < len(words) else None for i in indices_aa]
             combined_list = []
+
+
             max_len = max(len(brands), len(openCardCount), len(addToCartPercent), len(cartToOrderPercent),
-                          len(addToCartCount), len(stocksWb), len(nmID))
+                          len(addToCartCount), len(stocksWb), len(nmID), len(name))
+
+
+
+
+
+
+
+
+
+
 
             for i in range(max_len):
+                if i < len(name):
+                    combined_list.append(name[i])
                 if i < len(brands):
                     combined_list.append("brand: " + brands[i])
                 if i < len(openCardCount):
@@ -220,18 +239,40 @@ def parsing():
                 if i < len(nmID):
                     combined_list.append("ID: " + nmID[i])
 
+
+
             brand_data = defaultdict(
                 lambda: {'Переходы': 0, 'Конверсии в корзину': 0, 'Конверсии в заказ': 0, 'Добавление в корзину': 0,
                          'Остатки товаров на складе': 0, 'Бренд': "", 'Показы': '-', 'Клики': "-", 'CTR': '-'})
             IDD = []
-            for i in range(0, len(combined_list), 7):
-                brand = combined_list[i].split(': ')[1]
-                openCardCount = int(combined_list[i + 1].split(': ')[1])
-                addToCartPercent = int(combined_list[i + 2].split(': ')[1])
-                cartToOrderPercent = int(combined_list[i + 3].split(': ')[1])
-                addToCartCount = int(combined_list[i + 4].split(': ')[1])
-                stocksWb = int(combined_list[i + 5].split(': ')[1])
-                nmID1 = int(combined_list[i + 6].split(': ')[1])
+
+            idol = 0
+            while idol < len(combined_list):
+                if combined_list[idol].startswith('Возбуждающие'):
+                    del combined_list[idol:idol + 8]
+                elif combined_list[idol].startswith('Лубриканты'):
+                    del combined_list[idol:idol + 8]
+                else:
+                    idol += 1
+
+
+
+            #new_list = [item for item in combined_list if 'Жиросжигатели' not in item]
+
+
+
+            print(combined_list)
+            print(len(combined_list))
+
+
+            for i in range(0, len(combined_list), 8):
+                brand = combined_list[i + 1].split(': ')[1]
+                openCardCount = int(combined_list[i + 2].split(': ')[1])
+                addToCartPercent = int(combined_list[i + 3].split(': ')[1])
+                cartToOrderPercent = int(combined_list[i + 4].split(': ')[1])
+                addToCartCount = int(combined_list[i + 5].split(': ')[1])
+                stocksWb = int(combined_list[i + 6].split(': ')[1])
+                nmID1 = int(combined_list[i + 7].split(': ')[1])
 
                 brand_data[nmID1]['Переходы'] = openCardCount
                 brand_data[nmID1]['Конверсии в корзину'] = addToCartPercent
@@ -323,8 +364,8 @@ def parsing():
             def CopyFromExcInGsh(): 
                 client = gspread.authorize(credentials)
 
-                spreadsheet = client.open(KEY_TABLE)
-                worksheet = spreadsheet.worksheet('Аналитика и статистика')
+                spreadsheet = client.open("analyticWB")
+                worksheet = spreadsheet.worksheet('Лист2')
 
                 df = pd.read_excel("analyticWB.xlsx")
                 data_list = df.values.tolist()
