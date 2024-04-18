@@ -365,7 +365,7 @@ def parsing():
                 client = gspread.authorize(credentials)
 
                 spreadsheet = client.open(KEY_TABLE)
-                worksheet = spreadsheet.worksheet('Аналитика и статистика нутраген ')
+                worksheet = spreadsheet.worksheet('Аналитика и статистика нутраген')
 
                 df = pd.read_excel("analyticWB.xlsx")
                 data_list = df.values.tolist()
