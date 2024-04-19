@@ -1,16 +1,9 @@
-import openpyxl,requests,schedule,gspread,re,time
+import openpyxl, requests, schedule, gspread, re, time
 from openpyxl.utils import get_column_letter
-from datetime import datetime,timedelta
+from datetime import datetime, timedelta
 from oauth2client.service_account import ServiceAccountCredentials
-from google.oauth2 import service_account
 from collections import defaultdict
 import pandas as pd
-import os
-from dotenv import load_dotenv
-import json
-import io
-
-load_dotenv()
 
 
 def parsing():
@@ -21,21 +14,18 @@ def parsing():
     # url на получение статистики
     url_2 = 'https://advert-api.wb.ru/adv/v2/fullstats'
 
-    API_KEY = os.getenv("API_KEY")
-    NUTRA = os.getenv('SECRET_JSON')
-    KEY_TABLE = os.getenv('KEY_TABLE')
-    #print(KEY_TABLE)
-
-
     HeaderApiKey1 = {
-        'Authorization': f'{API_KEY}',
+        'Authorization': 'eyJhbGciOiJFUzI1NiIsImtpZCI6IjIwMjMxMjI1djEiLCJ0eXAiOiJKV1QifQ'
+                         '.eyJlbnQiOjEsImV4cCI6MTcyNDM3NTc3MCwiaWQiOiJhYWY2Mjg2Ny00Zjc1LT'
+                         'RiNTMtODljNS05MTExZTlhYjYyZGQiLCJpaWQiOjE0Njk0MTQzLCJvaWQiOjgxMjg'
+                         '3MCwicyI6NjgsInNpZCI6IjBjNDdiMGMwLWY3MmMtNDYwNi04MjYxLTFhMmNiYjZkND'
+                         'AzNyIsInQiOmZhbHNlLCJ1aWQiOjE0Njk0MTQzfQ.bWwOn5JQrNCte8o6KMpr38o5Uh5k-'
+                         '-0JdlZFnImwNvJfoj0-nZDbxcn7NJKg07Vn8NIi9irS9-6T0KJFPlgfMg',
         'Content-Type': 'application/json'
     }
-    print(HeaderApiKey1)
 
     scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-    credentials = ServiceAccountCredentials.from_json_keyfile_name("secret.json", scope)
-
+    credentials = ServiceAccountCredentials.from_json_keyfile_name("nutragenanalytics-eae0615deabf.json", scope)
     columnStat = 3
 
     now = datetime.now()
@@ -116,6 +106,8 @@ def parsing():
             words = result.split()
             words1 = result1.split()
 
+            print(words)
+
             start_row = 2
             start_column = 3
 
@@ -140,6 +132,8 @@ def parsing():
                         next_day2 = False
                         continue
 
+
+
             Jdata2 = response2.json()
             camp_data = []
             for c in Jdata2:
@@ -148,14 +142,15 @@ def parsing():
                         for nm in a['nm']:
                             nm['appType'] = a['appType']
                             nm['date'] = d['date']
-                            nm['advertId'] = c['advertId'] 
+                            nm['advertId'] = c['advertId']  # Обработка данных из словаря
                             camp_data.append(nm)
             camp_df = pd.DataFrame(camp_data)
             df_filtered = camp_df[["nmId", 'views', "clicks", "advertId"]]
             df_filtered = camp_df.groupby('advertId').agg(
                 {'nmId': 'first', 'views': 'sum', 'clicks': 'sum'}).reset_index()
             df_filtered = df_filtered.groupby('nmId').agg(
-                lambda x: x.sum() if x.name != 'advertId' else x.iloc[0]).reset_index() 
+                lambda x: x.sum() if x.name != 'advertId' else x.iloc[
+                    0]).reset_index()  # складывание данных с рахныъ устройств
             df_filtered.drop(columns=['advertId'], inplace=True)
             df_filtered['CTR'] = (round(df_filtered['clicks'] / df_filtered['views'] * 100, 2))
             camp_data1 = df_filtered.set_index('nmId').to_dict(orient="index")
@@ -188,6 +183,9 @@ def parsing():
                 brand_name = brand_name.replace("brandName", "")
                 brands.append(brand_name)
 
+
+
+
             indices_name = [i for i, x in enumerate(words) if x == "name"]
             name = [words[i + 1] if i + 1 < len(words) else None for i in indices_name]
 
@@ -210,15 +208,6 @@ def parsing():
 
             max_len = max(len(brands), len(openCardCount), len(addToCartPercent), len(cartToOrderPercent),
                           len(addToCartCount), len(stocksWb), len(nmID), len(name))
-
-
-
-
-
-
-
-
-
 
 
             for i in range(max_len):
@@ -298,7 +287,8 @@ def parsing():
                 sheet.cell(row=row_pi, column=column, value="НАЗВАНИЕ БРЕНДА")
                 sheet.cell(row=row_pi, column=column - 1, value="МЕТРИКА")
                 sheet.cell(row=row_pi, column=column + 1, value="Артикул")
-
+                for i in range(1, 35):
+                    sheet.cell(row=row_pi + 1, column=i, value="--------------------")
                 row_pi += 10
                 if ID in brand_data:
                     data = brand_data[ID]
@@ -350,7 +340,8 @@ def parsing():
                     sheet.cell(row=row_ro, column=column, value=data['Бренд'])
 
                     sheet.cell(row=row_ro, column=column + 1, value=data['ID'])
-
+                    for i in range(1, 35):
+                        sheet.cell(row=row_ro + 1, column=i, value="--------------------")
                     row_ro += 3
                     row_pi += 1
 
@@ -358,16 +349,15 @@ def parsing():
                     sheet.cell(row=start_row, column=start_column + i + 1, value=date.strftime('%d.%m.%y'))
                     row = start_row
                 start_row += 11
-            wb.save("analyticWB.xlsx")
+            wb.save("sheet.xlsx")
 
-
-            def CopyFromExcInGsh(): 
+            def CopyFromExcInGsh():
                 client = gspread.authorize(credentials)
 
-                spreadsheet = client.open(KEY_TABLE)
-                worksheet = spreadsheet.worksheet('Аналитика и статистика нутраген')
+                spreadsheet = client.open('Аналитика и статистика продвижения')
+                worksheet = spreadsheet.worksheet('Аналитика и статистика космодом')
 
-                df = pd.read_excel("analyticWB.xlsx")
+                df = pd.read_excel("sheet.xlsx")
                 data_list = df.values.tolist()
                 num_cols = len(data_list[0])
 
@@ -386,5 +376,6 @@ def parsing():
             if response.status_code == 200:
                 CopyFromExcInGsh()
                 columnStat += 1
-        
+
+
 parsing()
