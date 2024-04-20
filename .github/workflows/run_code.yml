@@ -20,7 +20,7 @@ jobs:
               uses: actions/checkout@v4
             - name: Use secret JSON
               env:
-                SECRET_JSON: ${{ secrets.NUTRA }}
+                SECRET_JSON: ${{ secrets.NUTRA_1 }}
               run: echo "$SECRET_JSON" > secret.json
             - name: Install Dependencies
               run: pip install -r requirements.txt 
