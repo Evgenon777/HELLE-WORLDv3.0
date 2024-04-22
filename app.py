@@ -31,7 +31,6 @@ def parsing():
         'Authorization': f'{API_KEY}',
         'Content-Type': 'application/json'
     }
-    print(HeaderApiKey1)
 
     scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
     credentials = ServiceAccountCredentials.from_json_keyfile_name("secret.json", scope)
@@ -367,7 +366,7 @@ def parsing():
             def CopyFromExcInGsh(): 
                 client = gspread.authorize(credentials)
 
-                spreadsheet = client.open(KEY_TABLE)
+                spreadsheet = client.open_by_key(KEY_TABLE)
                 worksheet = spreadsheet.worksheet('Аналитика и статистика нутраген')
 
                 df = pd.read_excel("analyticWB.xlsx")
