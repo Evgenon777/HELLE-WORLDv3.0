@@ -352,7 +352,7 @@ def parsing():
 
                     sheet.cell(row=row_ro, column=column + 1, value=data['ID'])
                     for i in range(1, 35):
-                        sheet.cell(row=row_pi + 1, column=i, value="--------------------")
+                        sheet.cell(row=row_pi, column=i, value="--------------------")
                     row_ro += 3
                     row_pi += 1
 
