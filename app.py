@@ -88,14 +88,20 @@ def parsing():
             time.sleep(1)
             print(date)
             print()
-            response = requests.post(url, json=data, headers=HeaderApiKey1)
-            response1 = requests.get(url_1, headers=HeaderApiKey11)
+            cleaned_header1 = {key: value.strip() for key, value in HeaderApiKey1.items()}
+            cleaned_header2 = {key: value.strip() for key, value in HeaderApiKey11.items()}
+            cleaned_header3 = {key: value.strip() for key, value in HeaderApiKey2.items()}
+            cleaned_header4 = {key: value.strip() for key, value in HeaderApiKey22.items()}
+            cleaned_header5 = {key: value.strip() for key, value in HeaderApiKey3.items()}
+            cleaned_header6 = {key: value.strip() for key, value in HeaderApiKey33.items()}
+            response = requests.post(url, json=data, headers=cleaned_header1)
+            response1 = requests.get(url_1, headers=cleaned_header2)
 
-            response00 = requests.post(url, json=data, headers=HeaderApiKey2)
-            response11 = requests.get(url_1, headers=HeaderApiKey22)
+            response00 = requests.post(url, json=data, headers=cleaned_header3)
+            response11 = requests.get(url_1, headers=cleaned_header4)
 
-            response000 = requests.post(url, json=data, headers=HeaderApiKey3)
-            response111 = requests.get(url_1, headers=HeaderApiKey33)
+            response000 = requests.post(url, json=data, headers=cleaned_header5)
+            response111 = requests.get(url_1, headers=cleaned_header6)
 
 
             if response.status_code == 200 and response00.status_code == 200 and response000.status_code == 200:
@@ -195,9 +201,9 @@ def parsing():
                 params1 = [{'id': c, 'dates': [date_from]} for c in id]
                 params11 = [{'id': c, 'dates': [date_from]} for c in id1]
                 params111 = [{'id': c, 'dates': [date_from]} for c in id11]
-                response2 = requests.post(url_2, headers=HeaderApiKey1, json=params1)
-                response22 = requests.post(url_2, headers=HeaderApiKey2, json=params11)
-                response222 = requests.post(url_2, headers=HeaderApiKey3, json=params111)
+                response2 = requests.post(url_2, headers=cleaned_header1, json=params1)
+                response22 = requests.post(url_2, headers=cleaned_header3, json=params11)
+                response222 = requests.post(url_2, headers=cleaned_header5, json=params111)
 
                 if response2.status_code == 200 and response22.status_code == 200 and response222.status_code ==200:
 
