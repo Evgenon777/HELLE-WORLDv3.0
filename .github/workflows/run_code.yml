@@ -3,13 +3,17 @@ name: WB GOOD EVERY DAY
 on: 
   push:
   schedule:
-    - cron: '0 */3 * * *'
-
+    - cron: '*/30 * * * *'
 
 env:
-    API_KEY: ${{ secrets.API_KEY }}
+    API_KEY1: ${{ secrets.API_KEY1 }}
+    API_KEY11: ${{ secrets.API_KEY11 }}
+    API_KEY2: ${{ secrets.API_KEY2 }}
+    API_KEY22: ${{ secrets.API_KEY22 }}
+    API_KEY3: ${{ secrets.API_KEY3 }}
+    API_KEY33: ${{ secrets.API_KEY33 }}
     KEY_TABLE: ${{ secrets.KEY_TABLE }}
-    
+
 
 jobs:
     Daily-Run:
