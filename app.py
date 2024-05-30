@@ -447,8 +447,8 @@ def parsing():
 
             if date.strftime("%Y-%m-%d") == now.strftime("%Y-%m-%d"):
                 loadGoogleSheet.CopyFromExcInGsh()
-                cosmo.rooo()
-                setsuko.rooo()
-                nutra.rooo()
+                # cosmo.rooo()
+                # setsuko.rooo()
+                # nutra.rooo()
 
 parsing()

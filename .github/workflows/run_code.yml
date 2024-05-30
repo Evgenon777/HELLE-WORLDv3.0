@@ -2,8 +2,6 @@ name: WB GOOD EVERY DAY
 
 on: 
   push:
-  schedule:
-    - cron: '*/30 * * * *'
 
 env:
     API_KEY1: ${{ secrets.API_KEY1 }}
