@@ -90,7 +90,6 @@ def parsing():
             print()
             response = requests.post(url, json=data, headers=HeaderApiKey1)
             response1 = requests.get(url_1, headers=HeaderApiKey11)
-            print("н")
 
             response00 = requests.post(url, json=data, headers=HeaderApiKey2)
             response11 = requests.get(url_1, headers=HeaderApiKey22)
