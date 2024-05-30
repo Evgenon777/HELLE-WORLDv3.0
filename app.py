@@ -1,17 +1,13 @@
-import openpyxl,requests,schedule,gspread,re,time
-from openpyxl.utils import get_column_letter
+import requests,re,time
 from datetime import datetime,timedelta
-from oauth2client.service_account import ServiceAccountCredentials
-from google.oauth2 import service_account
 from collections import defaultdict
 import pandas as pd
+import loadDataInExcel, loadGoogleSheet
+import cosmo, setsuko, nutra
 import os
 from dotenv import load_dotenv
-import json
-import io
 
 load_dotenv()
-
 
 def parsing():
     # url на аналитику
@@ -21,33 +17,60 @@ def parsing():
     # url на получение статистики
     url_2 = 'https://advert-api.wb.ru/adv/v2/fullstats'
 
-    API_KEY = os.getenv("API_KEY")
+    API_KEY1 = os.getenv("API_KEY1")
+    API_KEY11 = os.getenv("API_KEY11")
+    API_KEY2 = os.getenv("API_KEY2")
+    API_KEY22 = os.getenv("API_KEY22")
+    API_KEY3 = os.getenv("API_KEY3")
+    API_KEY33 = os.getenv("API_KEY33")
     NUTRA = os.getenv('SECRET_JSON')
-    KEY_TABLE = os.getenv('KEY_TABLE')
-    #print(KEY_TABLE)
-
 
     HeaderApiKey1 = {
-        'Authorization': f'{API_KEY}',
+        'Authorization': f'{API_KEY1}',
         'Content-Type': 'application/json'
     }
 
-    scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-    credentials = ServiceAccountCredentials.from_json_keyfile_name("secret.json", scope)
+    HeaderApiKey11 = {
+        'Authorization': f'{API_KEY11}',
+        'Content-Type': 'application/json'
+    }
 
-    columnStat = 3
+    HeaderApiKey2 = {
+        'Authorization': f'{API_KEY2}',
+        'Content-Type': 'application/json'
+    }
+
+    HeaderApiKey22 = {
+        'Authorization': f'{API_KEY22}',
+        'Content-Type': 'application/json'
+    }
+
+    HeaderApiKey3 = {
+        'Authorization': f'{API_KEY3}',
+        'Content-Type': 'application/json'
+    }
+
+    HeaderApiKey33 = {
+        'Authorization': f'{API_KEY33}',
+        'Content-Type': 'application/json'
+    }
 
     now = datetime.now()
     now = now - timedelta(days=1)
     start_of_month = datetime(now.year, now.month, 1)
     dates = pd.date_range(start_of_month, now, freq='D')
+
     newdates = dates
-    saved_positions = {}
     for date in newdates:
         next_day = False
         Jdata = None
-
         Jdata1 = None
+
+        Jdata00 = None
+        Jdata11 = None
+
+        Jdata000 = None
+        Jdata111 = None
         while next_day == False:
             data = {
                 "brandNames": [],
@@ -66,24 +89,41 @@ def parsing():
             print(date)
             print()
             response = requests.post(url, json=data, headers=HeaderApiKey1)
-            response1 = requests.get(url_1, headers=HeaderApiKey1)
+            response1 = requests.get(url_1, headers=HeaderApiKey11)
 
-            if response.status_code == 200:
+            response00 = requests.post(url, json=data, headers=HeaderApiKey2)
+            response11 = requests.get(url_1, headers=HeaderApiKey22)
+
+            response000 = requests.post(url, json=data, headers=HeaderApiKey3)
+            response111 = requests.get(url_1, headers=HeaderApiKey33)
+
+
+            if response.status_code == 200 and response00.status_code == 200 and response000.status_code == 200:
                 print('Данные успешно получены за', date.strftime("%Y-%m-%d"))
-                print()
+                print("-----")
                 Jdata = response.json()
                 Jdata1 = response1.json()
+
+                Jdata00 = response00.json()
+                Jdata11 = response11.json()
+
+                Jdata000 = response000.json()
+                Jdata111 = response111.json()
+
                 next_day = True
             else:
-                if response.status_code != 200:
+                if response.status_code != 200 and response00.status_code != 200 and response000.status_code != 200:
                     print(response.status_code)
                     Jdata = Jdata
                     Jdata1 = Jdata1
+
+                    Jdata00 = Jdata00
+                    Jdata11 = Jdata11
+
+                    Jdata000 = Jdata000
+                    Jdata111 = Jdata111
                     next_day = False
                     continue
-
-            wb = openpyxl.Workbook()
-            sheet = wb.active
 
             def deleate(res):
                 while re.search('previousPeriod.*?stocks', str(res), flags=re.DOTALL):
@@ -104,57 +144,124 @@ def parsing():
             pop = deleate(Jdata)
             pop1 = deleate(Jdata1)
 
+            pop00 = deleate(Jdata00)
+            pop11 = deleate(Jdata11)
+
+            pop000 = deleate(Jdata000)
+            pop111 = deleate(Jdata111)
+
             cleaned_text = Remove(str(pop))
             cleaned_text1 = Remove(str(pop1))
+
+            cleaned_text00 = Remove(str(pop00))
+            cleaned_text11 = Remove(str(pop11))
+
+            cleaned_text000 = Remove(str(pop000))
+            cleaned_text111 = Remove(str(pop111))
 
             result = SpaceX(cleaned_text)
             result1 = SpaceX(cleaned_text1)
 
-            column = 2
+            result00 = SpaceX(cleaned_text00)
+            result11 = SpaceX(cleaned_text11)
+
+            result000 = SpaceX(cleaned_text000)
+            result111 = SpaceX(cleaned_text111)
 
             words = result.split()
             words1 = result1.split()
 
-            start_row = 2
-            start_column = 3
+            words00 = result00.split()
+            words11 = result11.split()
 
-            start_of_month = datetime(now.year, now.month, 1)
-            date_range = pd.date_range(start_of_month, now, freq='d')
+            words000 = result000.split()
+            words111 = result111.split()
+
+            words += words00 + words000
 
             indices_id = [i for i, x in enumerate(words1) if x == "advertId"]
             id = [int(words1[i + 1]) if i + 1 < len(words1) else None for i in indices_id]
+
+            indices_id1 = [i for i, x in enumerate(words11) if x == "advertId"]
+            id1 = [int(words11[i + 1]) if i + 1 < len(words11) else None for i in indices_id1]
+
+            indices_id11 = [i for i, x in enumerate(words111) if x == "advertId"]
+            id11 = [int(words111[i + 1]) if i + 1 < len(words111) else None for i in indices_id11]
+
             date_from = date.strftime("%Y-%m-%d")
             next_day2 = False
 
             while next_day2 == False:
                 params1 = [{'id': c, 'dates': [date_from]} for c in id]
+                params11 = [{'id': c, 'dates': [date_from]} for c in id1]
+                params111 = [{'id': c, 'dates': [date_from]} for c in id11]
                 response2 = requests.post(url_2, headers=HeaderApiKey1, json=params1)
-                if response2.status_code == 200:
+                response22 = requests.post(url_2, headers=HeaderApiKey2, json=params11)
+                response222 = requests.post(url_2, headers=HeaderApiKey3, json=params111)
+
+                if response2.status_code == 200 and response22.status_code == 200 and response222.status_code ==200:
 
                     next_day2 = True
                 else:
-                    if response2.status_code != 200:
-                        print(response2.json())
-                        print('loading2.....')
+                    if response2.status_code != 200 and response22.status_code != 200 and response222.status_code !=200:
+                        print('Ожидание отклика сервера...')
+                        time.sleep(20)
                         next_day2 = False
                         continue
 
             Jdata2 = response2.json()
+
+            Jdata22 = response22.json()
+
+            Jdata222 = response222.json()
+
             camp_data = []
+            camp_data2 = []
+            camp_data22 = []
+
             for c in Jdata2:
                 for d in c['days']:
                     for a in d['apps']:
                         for nm in a['nm']:
                             nm['appType'] = a['appType']
                             nm['date'] = d['date']
-                            nm['advertId'] = c['advertId'] 
+                            nm['advertId'] = c['advertId']
                             camp_data.append(nm)
+
+            for c in Jdata22:
+                for d in c['days']:
+                    for a in d['apps']:
+                        for nm in a['nm']:
+                            nm['appType'] = a['appType']
+                            nm['date'] = d['date']
+                            nm['advertId'] = c['advertId']
+                            camp_data2.append(nm)
+
+            if not isinstance(Jdata222, list):
+                Jdata222_list = [Jdata222]
+            else:
+                Jdata222_list = Jdata222
+
+            for c in Jdata222_list:
+                for d in c['days']:
+                    for a in d['apps']:
+                        for nm in a['nm']:
+                            nm['appType'] = a['appType']
+                            nm['date'] = d['date']
+                            nm['advertId'] = c['advertId']
+                            camp_data22.append(nm)
+
             camp_df = pd.DataFrame(camp_data)
-            df_filtered = camp_df[["nmId", 'views', "clicks", "advertId"]]
+            camp_df2 = pd.DataFrame(camp_data2)
+            camp_df3 = pd.DataFrame(camp_data22)
+
             df_filtered = camp_df.groupby('advertId').agg(
                 {'nmId': 'first', 'views': 'sum', 'clicks': 'sum'}).reset_index()
+
             df_filtered = df_filtered.groupby('nmId').agg(
-                lambda x: x.sum() if x.name != 'advertId' else x.iloc[0]).reset_index() 
+                lambda x: x.sum() if x.name != 'advertId' else x.iloc[
+                    0]).reset_index()
+
             df_filtered.drop(columns=['advertId'], inplace=True)
             df_filtered['CTR'] = (round(df_filtered['clicks'] / df_filtered['views'] * 100, 2))
             camp_data1 = df_filtered.set_index('nmId').to_dict(orient="index")
@@ -163,6 +270,38 @@ def parsing():
                 camp_data1[k]['Показы'] = v.pop('views')
                 camp_data1[k]['Клики'] = v.pop('clicks')
                 camp_data1[k]['CTR'] = v.pop('CTR')
+
+            df_filtered1 = camp_df2.groupby('advertId').agg(
+                {'nmId': 'first', 'views': 'sum', 'clicks': 'sum'}).reset_index()
+
+            df_filtered1 = df_filtered1.groupby('nmId').agg(
+                lambda x: x.sum() if x.name != 'advertId' else x.iloc[
+                    0]).reset_index()
+
+            df_filtered1.drop(columns=['advertId'], inplace=True)
+            df_filtered1['CTR'] = (round(df_filtered1['clicks'] / df_filtered1['views'] * 100, 2))
+            camp_data2 = df_filtered1.set_index('nmId').to_dict(orient="index")
+
+            for k, v in camp_data2.items():
+                camp_data2[k]['Показы'] = v.pop('views')
+                camp_data2[k]['Клики'] = v.pop('clicks')
+                camp_data2[k]['CTR'] = v.pop('CTR')
+
+            df_filtered11 = camp_df3.groupby('advertId').agg(
+                {'nmId': 'first', 'views': 'sum', 'clicks': 'sum'}).reset_index()
+
+            df_filtered11 = df_filtered11.groupby('nmId').agg(
+                lambda x: x.sum() if x.name != 'advertId' else x.iloc[
+                    0]).reset_index()
+
+            df_filtered11.drop(columns=['advertId'], inplace=True)
+            df_filtered11['CTR'] = (round(df_filtered11['clicks'] / df_filtered11['views'] * 100, 2))
+            camp_data3 = df_filtered11.set_index('nmId').to_dict(orient="index")
+
+            for k, v in camp_data3.items():
+                camp_data3[k]['Показы'] = v.pop('views')
+                camp_data3[k]['Клики'] = v.pop('clicks')
+                camp_data3[k]['CTR'] = v.pop('CTR')
 
             found_brand = False
             buffer = []
@@ -189,9 +328,6 @@ def parsing():
 
             indices_name = [i for i, x in enumerate(words) if x == "name"]
             name = [words[i + 1] if i + 1 < len(words) else None for i in indices_name]
-
-
-
             indices_nmID = [i for i, x in enumerate(words) if x == "nmID"]
             nmID = [words[i + 1] if i + 1 < len(words) else None for i in indices_nmID]
             indices_ost = [i for i, x in enumerate(words) if x == "stocksWb"]
@@ -206,19 +342,8 @@ def parsing():
             addToCartCount = [words[i + 1] if i + 1 < len(words) else None for i in indices_aa]
             combined_list = []
 
-
             max_len = max(len(brands), len(openCardCount), len(addToCartPercent), len(cartToOrderPercent),
                           len(addToCartCount), len(stocksWb), len(nmID), len(name))
-
-
-
-
-
-
-
-
-
-
 
             for i in range(max_len):
                 if i < len(name):
@@ -238,8 +363,6 @@ def parsing():
                 if i < len(nmID):
                     combined_list.append("ID: " + nmID[i])
 
-
-
             brand_data = defaultdict(
                 lambda: {'Переходы': 0, 'Конверсии в корзину': 0, 'Конверсии в заказ': 0, 'Добавление в корзину': 0,
                          'Остатки товаров на складе': 0, 'Бренд': "", 'Показы': '-', 'Клики': "-", 'CTR': '-'})
@@ -254,24 +377,37 @@ def parsing():
                 else:
                     idol += 1
 
+            index = 0
+            while index < len(combined_list):
+                del combined_list[index]
+                index += 7
 
+            index_to_remove = []
 
-            #new_list = [item for item in combined_list if 'Жиросжигатели' not in item]
+            for i in range(len(combined_list)):
+                if 'brand:  burner fat' in combined_list[i]:
+                    for j in range(i, i + 7):
+                        index_to_remove.append(j)
+                if 'brand:  SUCCUBA' in combined_list[i]:
+                    for j in range(i, i + 7):
+                        index_to_remove.append(j)
+                if 'brand:  Lovelei' in combined_list[i]:
+                    for j in range(i, i + 7):
+                        index_to_remove.append(j)
+                if 'brand:  RECIPE of Love' in combined_list[i]:
+                    for j in range(i, i + 7):
+                        index_to_remove.append(j)
 
+            filtered_data666 = [combined_list[i] for i in range(len(combined_list)) if i not in index_to_remove]
 
-
-            print(combined_list)
-            print(len(combined_list))
-
-
-            for i in range(0, len(combined_list), 8):
-                brand = combined_list[i + 1].split(': ')[1]
-                openCardCount = int(combined_list[i + 2].split(': ')[1])
-                addToCartPercent = int(combined_list[i + 3].split(': ')[1])
-                cartToOrderPercent = int(combined_list[i + 4].split(': ')[1])
-                addToCartCount = int(combined_list[i + 5].split(': ')[1])
-                stocksWb = int(combined_list[i + 6].split(': ')[1])
-                nmID1 = int(combined_list[i + 7].split(': ')[1])
+            for i in range(0, len(filtered_data666), 7):
+                brand = filtered_data666[i].split(': ')[1]
+                openCardCount = int(filtered_data666[i + 1].split(': ')[1])
+                addToCartPercent = int(filtered_data666[i + 2].split(': ')[1])
+                cartToOrderPercent = int(filtered_data666[i + 3].split(': ')[1])
+                addToCartCount = int(filtered_data666[i + 4].split(': ')[1])
+                stocksWb = int(filtered_data666[i + 5].split(': ')[1])
+                nmID1 = int(filtered_data666[i + 6].split(': ')[1])
 
                 brand_data[nmID1]['Переходы'] = openCardCount
                 brand_data[nmID1]['Конверсии в корзину'] = addToCartPercent
@@ -289,104 +425,30 @@ def parsing():
                     brand_data[key]['Клики'] = camp_data1[key]['Клики']
                     brand_data[key]['CTR'] = camp_data1[key]['CTR']
 
-            row_ro = 3
-            row_pi = 2
+            for key in camp_data2.keys():
+                if key in brand_data.keys():
+                    brand_data[key].update(camp_data2[key])
+                    brand_data[key]['Показы'] = camp_data2[key]['Показы']
+                    brand_data[key]['Клики'] = camp_data2[key]['Клики']
+                    brand_data[key]['CTR'] = camp_data2[key]['CTR']
 
-            for ID in IDD:
+            for key in camp_data3.keys():
+                if key in brand_data.keys():
+                    brand_data[key].update(camp_data3[key])
+                    brand_data[key]['Показы'] = camp_data3[key]['Показы']
+                    brand_data[key]['Клики'] = camp_data3[key]['Клики']
+                    brand_data[key]['CTR'] = camp_data3[key]['CTR']
 
-                sheet.cell(row=row_pi, column=column, value="НАЗВАНИЕ БРЕНДА")
-                sheet.cell(row=row_pi, column=column - 1, value="МЕТРИКА")
-                sheet.cell(row=row_pi, column=column + 1, value="Артикул")
-                for i in range(1, 35):
-                    sheet.cell(row=row_pi + 1, column=i, value="--------------------")
+            keys_list = dict(sorted(brand_data.items(), key=lambda x: x[1]['Бренд']))
 
-                row_pi += 10
-                if ID in brand_data:
-                    data = brand_data[ID]
-
-                    if ID in saved_positions:
-                        row_ro = saved_positions[ID]
-                    else:
-                        row_ro += 1
-                        saved_positions[ID] = row_ro
-
-                    sheet.cell(row=row_ro, column=column - 1, value="Переходы")
-                    sheet.cell(row=row_ro, column=columnStat + 1, value=data['Переходы'])
-                    sheet.cell(row=row_ro, column=column, value=data['Бренд'])
-                    sheet.cell(row=row_ro, column=column + 1, value=data['ID'])
-                    row_ro += 1
-                    sheet.cell(row=row_ro, column=column - 1, value="Конверсии в корзину")
-                    sheet.cell(row=row_ro, column=columnStat + 1, value=str(data['Конверсии в корзину']) + "%")
-                    sheet.cell(row=row_ro, column=column, value=data['Бренд'])
-                    sheet.cell(row=row_ro, column=column + 1, value=data['ID'])
-                    row_ro += 1
-                    sheet.cell(row=row_ro, column=column - 1, value="Конверсии в заказ")
-                    sheet.cell(row=row_ro, column=columnStat + 1, value=str(data['Конверсии в заказ']) + "%")
-                    sheet.cell(row=row_ro, column=column, value=data['Бренд'])
-                    sheet.cell(row=row_ro, column=column + 1, value=data['ID'])
-                    row_ro += 1
-                    sheet.cell(row=row_ro, column=column - 1, value="Добавление в корзину")
-                    sheet.cell(row=row_ro, column=columnStat + 1, value=data['Добавление в корзину'])
-                    sheet.cell(row=row_ro, column=column, value=data['Бренд'])
-                    sheet.cell(row=row_ro, column=column + 1, value=data['ID'])
-                    row_ro += 1
-                    sheet.cell(row=row_ro, column=column - 1, value="Остатки товаров на складе")
-                    sheet.cell(row=row_ro, column=columnStat + 1, value=data['Остатки товаров на складе'])
-                    sheet.cell(row=row_ro, column=column, value=data['Бренд'])
-                    sheet.cell(row=row_ro, column=column + 1, value=data['ID'])
-                    row_ro += 1
-
-                    sheet.cell(row=row_ro, column=column - 1, value="Показы")
-                    sheet.cell(row=row_ro, column=columnStat + 1, value=data['Показы'])
-                    sheet.cell(row=row_ro, column=column, value=data['Бренд'])
-                    sheet.cell(row=row_ro, column=column + 1, value=data['ID'])
-                    row_ro += 1
-                    sheet.cell(row=row_ro, column=column - 1, value="Клики")
-                    sheet.cell(row=row_ro, column=columnStat + 1, value=data['Клики'])
-                    sheet.cell(row=row_ro, column=column, value=data['Бренд'])
-                    sheet.cell(row=row_ro, column=column + 1, value=data['ID'])
-                    row_ro += 1
-                    sheet.cell(row=row_ro, column=column - 1, value="CTR")
-                    sheet.cell(row=row_ro, column=columnStat + 1, value=data['CTR'])
-                    sheet.cell(row=row_ro, column=column, value=data['Бренд'])
-
-                    sheet.cell(row=row_ro, column=column + 1, value=data['ID'])
-                    for i in range(1, 35):
-                        sheet.cell(row=row_pi, column=i, value="--------------------")
-                    row_ro += 3
-                    row_pi += 1
-
-                for i, date in enumerate(date_range):
-                    sheet.cell(row=start_row, column=start_column + i + 1, value=date.strftime('%d.%m.%y'))
-                    row = start_row
-                start_row += 11
-            wb.save("analyticWB.xlsx")
-
-
-            def CopyFromExcInGsh(): 
-                client = gspread.authorize(credentials)
-
-                spreadsheet = client.open_by_key(KEY_TABLE)
-                worksheet = spreadsheet.worksheet('Аналитика и статистика нутраген')
-
-                df = pd.read_excel("analyticWB.xlsx")
-                data_list = df.values.tolist()
-                num_cols = len(data_list[0])
-
-                cell_list = worksheet.range('A1:' + get_column_letter(num_cols) + str(len(data_list)))
-                for cell in cell_list:
-                    row = (cell.row - 1) if (cell.row - 1) < len(data_list) else -1
-                    col = (cell.col - 1) if (cell.col - 1) < num_cols else -1
-                    if row != -1 and col != -1:
-                        value = data_list[row][col]
-                        if pd.notna(value):
-                            cell.value = str(value)
-
-                worksheet.update_cells(cell_list)
-                print("Данные успешно загружены в таблицу Google Sheets!")
-
+            loadDataInExcel.Data(keys_list, brand_data, dates)
             if response.status_code == 200:
-                CopyFromExcInGsh()
-                columnStat += 1
-        
+                loadDataInExcel.columnStat += 1
+
+            if date.strftime("%Y-%m-%d") == now.strftime("%Y-%m-%d"):
+                loadGoogleSheet.CopyFromExcInGsh()
+                cosmo.rooo()
+                setsuko.rooo()
+                nutra.rooo()
+
 parsing()
